@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wecome Page</title>
+    <link rel="stylesheet" href="./index.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"></script>
+    <style>
+        .document {
+            display: inline-block;
+            align-items: center;
+            justify-content: center;
+
+
+        }
+
+        .inputFile {
+            display: none;
+        }
+
+        label {
+            height: 100px;
+            width: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #222;
+            margin-bottom: 10px;
+            font-size: 100px;
+            background: linear-gradient(45deg, blue, red);
+            cursor: pointer;
+        }
+
+        button {
+            padding: 20px 25px;
+            background: cornflowerblue;
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .bar {
+            height: 50px;
+            width: 500px;
+            background: grey;
+            margin-bottom: 10px;
+        }
+
+        .progress {
+            background: linear-gradient(12deg, red, blue);
+            height: 100%;
+            width: 0%;
+        }
+
+        .uploadPercentage {
+            font-style: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <div style="margin:100px">
+            <span id="user" class="message">Hello, < email-id></Email-id></span>
+            <div class="success"><span>Welcome to auth starter, You are successfully loged in!!!</span></div><br />
+            <input type="file" id="fileInp" class="inputFile" onchange="getFile(event)" name="photo"
+                accept="image/png, image/jpeg, image/jpg"><br><br>
+            <label for="fileInp">+</label><br>
+            <span class="fileText"></span>
+            <button onclick="uploadImage()"> UPLOAD BUTTON </button>
+            <div class="bar">
+                <div class="progress"></div>
+            </div>
+            <div class="uploadPercentage">0%</div>
+
+            <div class="document">
+
+                <input type="text" id="name" placeholder="enter your name"><br><br>
+                <input type="text" id="number" placeholder="enter expire pass no."><br><br>
+                from <input type="date" id="startdate"> to <input type="date" id="enddate"><br><br>
+
+                <BUTTON type="submit" id="submit">submit</BUTTON>
+                <!-- <button id="Addbtn">Add</button>
+                <button id="Retbtn">Retrieve</button>-->
+                <button id="Updbtn">Update</button>
+                <button id="Delbtn">Delete</button>
+            </div>
+            <br><br>
+            <div class="container mt-3">
+                <table class="table table-dark">
+                    <thead>
+                        <th>sno</th>
+                        <th>name</th>
+                        <th>number</th>
+                        <th>start date</th>
+                        <th>end date</th>
+                    </thead>
+                    <tbody id="tbody1"></tbody>
+                </table>
+            </div>
+            <br><br>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+    </center>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-app.js"></script>
+    <!--  -->
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.7/firebase-auth.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase.js"></script>
+    <script src="firebase.js"></script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, child, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsZCiO-vSu7TUXGcbVXlRjtSo9gMKE3F8",
+            authDomain: "fir-yt-dd0e6.firebaseapp.com",
+            databaseURL: "https://fir-yt-dd0e6-default-rtdb.firebaseio.com",
+            projectId: "fir-yt-dd0e6",
+            storageBucket: "fir-yt-dd0e6.appspot.com",
+            messagingSenderId: "213883205380",
+            appId: "1:213883205380:web:541f14130731ddf5244251"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        document.getElementById("submit").addEventListener('click', function (e) {
+            e.preventDefault();
+            set(ref(db, 'user/' + document.getElementById("name").value), {
+                name: document.getElementById("name").value,
+                number: document.getElementById("number").value,
+                startdate: document.getElementById("startdate").value,
+                enddate: document.getElementById("enddate").value
+            }).then(() => {
+                alert("data added successfully");
+            })
+                .catch((error) => {
+                    alert("unsuccessful");
+                    console.log(error);
+                })
+        })
+        function Deletedata() {
+            remove(ref(db, 'user/' + document.getElementById("name").value))
+                .then(() => {
+                    alert("data updated successfully");
+                })
+                .catch((error) => {
+                    alert("unsuccessful");
+                    console.log(error);
+                })
+        }
+        Delbtn.addEventListener('click', Deletedata);
+
+        function updatedata() {
+            update(ref(db, 'user/' + document.getElementById("name").value), {
+                name: document.getElementById("name").value,
+                number: document.getElementById("number").value,
+                startdate: document.getElementById("startdate").value,
+                enddate: document.getElementById("enddate").value
+            }).then(() => {
+                alert("data updated successfully");
+            })
+                .catch((error) => {
+                    alert("unsuccessful");
+                    console.log(error);
+                })
+        }
+        Updbtn.addEventListener('click', updatedata);
+
+        var stdNo = 0;
+        var tbody = document.getElementById('tbody1');
+        function AddItemsToTable(name, number, stardate, enddate) {
+            let trow = document.createElement("tr");
+            let td1 = document.createElement("td");
+            let td2 = document.createElement("td");
+            let td3 = document.createElement("td");
+            let td4 = document.createElement("td");
+            let td5 = document.createElement("td");
+
+            td1.innerHTML = ++stdNo;
+            td2.innerHTML = name;
+            td3.innerHTML = number;
+            td4.innerHTML = stardate;
+            td5.innerHTML = enddate;
+
+            trow.appendChild(td1);
+            trow.appendChild(td2);
+            trow.appendChild(td3);
+            trow.appendChild(td4);
+            trow.appendChild(td5);
+
+            tbody.appendChild(trow);
+        }
+        function AddAllItemsToTable(thestudent) {
+            stdNo = 0;
+            tbody.innerHTML = "";
+            thestudent.forEach(element => {
+                AddItemsToTable(element.name, element.number, element.startdate, element.enddate);
+            });
+        }
+        function GetAllDataOnce() {
+            const dbRef = ref(db);
+            get(child(dbRef, 'user/'))
+                .then((snapshot) => {
+                    var users = [];
+                    snapshot.forEach(childSnapshot => {
+                        users.push(childSnapshot.val());
+                    });
+                    AddAllItemsToTable(users);
+                });
+        };
+        window.onload = GetAllDataOnce;
+        // let name = document.getElementById("name");
+        // let number = document.getElementById("number");
+        // let startdate = document.getElementById("startdate");
+        // let enddate = document.getElementById("enddate");
+
+        // let Addbtn = document.getElementById("Addbtn");
+        // let Retbtn = document.getElementById("Retbtn");
+        // let Updbtn = document.getElementById("Updbtn");
+        // let Delbtn = document.getElementById("Delbtn");
+        // function AddData() {
+        //     set(ref(db, 'person/' + number.value), {
+        //         nameofperson: { pname: name.value, startdate: startdate.value, enddate: enddate.value },
+        //     }).then(() => {
+        //         alert("data added successfully");
+        //     })
+        //         .catch((error) => {
+        //             alert("unsuccessful");
+        //             console.log(error);
+        //         })
+        // }
+        // function Retdata() {
+        //     const dbRef = ref(db);
+        //     get(child(dbRef, 'person/' + number.value)).then((snapshot) => {
+        //         if (snapshot.exists()) {
+        //             name.value = snapshot.val().nameofperson.pname;
+        //             startdate.value = snapshot.val().nameofperson.startdate;
+        //             enddate.value = snapshot.val().nameofperson.enddate;
+        //         }
+        //     })
+        //         .catch((error) => {
+        //             alert("unsuccessful");
+        //             console.log(error);
+        //         })
+        //     function updatedata() {
+        //         update(ref(db, 'person/' + number.value), {
+        //             nameofperson: { pname: name.value, startdate: startdate.value, enddate: enddate.value },
+        //         }).then(() => {
+        //             alert("data updated successfully");
+        //         })
+        //             .catch((error) => {
+        //                 alert("unsuccessful");
+        //                 console.log(error);
+        //             })
+        //     }
+        //     function Deletedata() {
+        //         remove(ref(db, 'person/' + number.value))
+        //             .then(() => {
+        //                 alert("data updated successfully");
+        //             })
+        //             .catch((error) => {
+        //                 alert("unsuccessful");
+        //                 console.log(error);
+        //             })
+        //     }
+        //     Addbtn.addEventListener('click', AddData);
+        //     Retbtn.addEventListener('click', Retdata);
+        //     Updbtn.addEventListener('click', updatedata);
+        //     Delbtn.addEventListener('click', Deletedata);
+        // }
+    </script>
+
+    <script src="welcome.js"></script>
+</body>
+
+</html>
